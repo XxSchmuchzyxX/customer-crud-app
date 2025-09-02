@@ -1,0 +1,78 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    {{ isEditing ? 'Edit Customer' : 'Add New Customer' }}
+  </h4>
+</div>
+
+<form (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <!-- First Name -->
+    <div class="mb-3">
+      <label for="firstName" class="form-label">First Name *</label>
+      <input
+        type="text"
+        class="form-control"
+        id="firstName"
+        [(ngModel)]="formData.first_name"
+        name="first_name"
+        [class.is-invalid]="errors.first_name"
+        placeholder="Enter first name">
+      <div *ngIf="errors.first_name" class="invalid-feedback">
+        {{ errors.first_name }}
+      </div>
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-3">
+      <label for="lastName" class="form-label">Last Name *</label>
+      <input
+        type="text"
+        class="form-control"
+        id="lastName"
+        [(ngModel)]="formData.last_name"
+        name="last_name"
+        [class.is-invalid]="errors.last_name"
+        placeholder="Enter last name">
+      <div *ngIf="errors.last_name" class="invalid-feedback">
+        {{ errors.last_name }}
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        [(ngModel)]="formData.email"
+        name="email"
+        [class.is-invalid]="errors.email"
+        placeholder="Enter email (optional)">
+      <div *ngIf="errors.email" class="invalid-feedback">
+        {{ errors.email }}
+      </div>
+    </div>
+
+    <!-- Contact Number -->
+    <div class="mb-3">
+      <label for="contactNumber" class="form-label">Contact Number</label>
+      <input
+        type="tel"
+        class="form-control"
+        id="contactNumber"
+        [(ngModel)]="formData.contact_number"
+        name="contact_number"
+        placeholder="Enter contact number (optional)">
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">
+      Cancel
+    </button>
+    <button type="submit" class="btn btn-primary">
+      {{ isEditing ? 'Update Customer' : 'Create Customer' }}
+    </button>
+  </div>
+</form>

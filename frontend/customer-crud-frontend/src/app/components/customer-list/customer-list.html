@@ -1,0 +1,161 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3 class="card-title mb-0">Customer Management</h3>
+          <div class="d-flex align-items-center">
+            <span class="badge bg-secondary me-3">{{ customers.length }} customers</span>
+            <button class="btn btn-primary" (click)="openAddModal()">
+              <i class="bi bi-plus"></i> Add Customer
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Success Message -->
+          <div *ngIf="success" class="alert alert-success alert-dismissible fade show">
+            {{ success }}
+            <button type="button" class="btn-close" (click)="success = ''"></button>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="error" class="alert alert-danger alert-dismissible fade show">
+            {{ error }}
+            <button type="button" class="btn-close" (click)="error = ''"></button>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="row mb-4">
+            <div class="col-md-8">
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  placeholder="Search by name or email..." 
+                  [(ngModel)]="searchQuery"
+                  (keyup.enter)="onSearch()"
+                  [disabled]="loading">
+                <button 
+                  class="btn btn-outline-primary" 
+                  type="button" 
+                  (click)="onSearch()"
+                  [disabled]="loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                  Search
+                </button>
+                <button 
+                  class="btn btn-outline-secondary" 
+                  type="button" 
+                  (click)="clearSearch()"
+                  [disabled]="loading">
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading Spinner -->
+          <div *ngIf="loading" class="text-center py-4">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2 text-muted">Loading customers...</p>
+          </div>
+
+          <!-- Customers Table -->
+          <div *ngIf="!loading" class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email</th>
+                  <th>Contact Number</th>
+                  <th class="text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let customer of customers">
+                  <td>{{ customer.id }}</td>
+                  <td>{{ customer.first_name }}</td>
+                  <td>{{ customer.last_name }}</td>
+                  <td>
+                    <span *ngIf="customer.email; else noEmail">{{ customer.email }}</span>
+                    <ng-template #noEmail><span class="text-muted">N/A</span></ng-template>
+                  </td>
+                  <td>
+                    <span *ngIf="customer.contact_number; else noPhone">{{ customer.contact_number }}</span>
+                    <ng-template #noPhone><span class="text-muted">N/A</span></ng-template>
+                  </td>
+                  <td class="text-center">
+                    <button 
+                      class="btn btn-sm btn-outline-primary me-1" 
+                      (click)="openEditModal(customer)"
+                      title="Edit Customer">
+                      Edit
+                    </button>
+                    <button 
+                      class="btn btn-sm btn-outline-danger" 
+                      (click)="confirmDelete(customer)"
+                      title="Delete Customer">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="customers.length === 0">
+                  <td colspan="6" class="text-center text-muted py-4">
+                    No customers found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Customer Modal -->
+<div *ngIf="showModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <app-customer-form 
+        [customer]="currentCustomer"
+        [isEditing]="isEditing"
+        (save)="onSaveCustomer($event)"
+        (cancel)="closeModal()">
+      </app-customer-form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div *ngIf="showDeleteConfirm" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-danger">Confirm Delete</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this customer?</p>
+        <div class="card bg-light">
+          <div class="card-body">
+            <strong>{{ customerToDelete?.first_name }} {{ customerToDelete?.last_name }}</strong><br>
+            <small class="text-muted">{{ customerToDelete?.email || 'No email' }}</small>
+          </div>
+        </div>
+        <p class="text-danger mt-3 mb-0">
+          <small><strong>This action cannot be undone.</strong></small>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-danger" (click)="deleteCustomer()">
+          Delete Customer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
